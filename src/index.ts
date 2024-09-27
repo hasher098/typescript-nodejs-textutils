@@ -35,7 +35,9 @@ const modifications = textService.getModificationsFromArgs(commands);
 textService.loadModifications(modifications);
 
 // load content of inputFile, process and save it
-getContentFromInputFile(inputFile).then((fileContent) => {
-  const resultText = textService.processText(fileContent);
-  saveContentToOutput(resultText, outputFile);
-});
+getContentFromInputFile(inputFile)
+  .then((fileContent) => {
+    const resultText = textService.processText(fileContent);
+    saveContentToOutput(resultText, outputFile);
+  })
+  .catch((err) => console.error(err));

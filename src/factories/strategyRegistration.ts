@@ -28,6 +28,8 @@ export function registerStrategiesByVersion(
     "remove",
     (option) => new RemoveWordStrategy(option || "")
   );
+
+  // premium features
   if (version === VERSIONS.PREMIUM) {
     StrategyFactory.registerStrategy(
       "add",

@@ -1,20 +1,19 @@
-import { text } from "stream/consumers";
-import { registerStrategiesByVersion } from "../factories/strategyRegistration";
-import { TextService } from "../services/textService";
+import { ToUpperCaseStrategy } from "../strategies";
+import { StrategyFactory } from "./strategyFactory";
 
 describe("TextProcessor", () => {
-  it("should return the original text if no modifications are registered", () => {
-    const textService = new TextService();
+  it("should not use option that is not registered and throw an error", () => {
     const wrongModificaiton = "notExistingBadOption";
+    StrategyFactory.registerStrategy(
+      wrongModificaiton,
+      () => new ToUpperCaseStrategy()
+    );
+
     try {
-      textService.loadModifications([
-        {
-          type: wrongModificaiton,
-        },
-      ]);
+      StrategyFactory.createStrategy({ type: "uppercase" });
     } catch (e: any) {
       expect(e.message).toBe(
-        `Check if your modification is allowed in your current plan: ${wrongModificaiton}`
+        `Check if your modification is allowed in your current plan: uppercase`
       );
     }
   });

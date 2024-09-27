@@ -1,6 +1,5 @@
 import { StrategyFactory } from "../factories/strategyFactory";
 import { CommandsType, ModificationStrategy } from "../interfaces";
-import { readTextFile, writeTextFile } from "../utils/fileUtils";
 
 export class TextService {
   private strategies: ModificationStrategy[] = [];
