@@ -1,4 +1,4 @@
-import { ModificationStrategy } from "./modificationStrategy";
+import { ModificationStrategy } from "../interfaces/modificationStrategy";
 
 export class ReverseStrategy implements ModificationStrategy {
   modify(text: string): string {

@@ -1,27 +1,32 @@
 import { StrategyFactory } from "../factories/strategyFactory";
+import { CommandsType, ModificationStrategy } from "../interfaces";
 import { readTextFile, writeTextFile } from "../utils/fileUtils";
 
 export class TextService {
-  async processText(
-    inputFile: string,
-    outputFile: string,
-    modifications: { type: string; value?: string }[]
-  ) {
-    try {
-      let text = await readTextFile(inputFile);
+  private strategies: ModificationStrategy[] = [];
 
-      for (const modification of modifications) {
-        const strategy = StrategyFactory.createStrategy(
-          modification.type,
-          modification.value
-        );
-        text = strategy.modify(text);
-      }
+  getModificationsFromArgs(argCommands: string[]): CommandsType[] {
+    const extractedModifications = argCommands.map((modification) => {
+      const [type, option] = modification.split(":");
+      return { type, option };
+    });
+    return extractedModifications;
+  }
 
-      await writeTextFile(outputFile, text);
-      console.log("text written and modified by strategies");
-    } catch (error) {
-      console.error("Something is not yes:", error);
-    }
+  loadModifications(modifications: CommandsType[]): void {
+    modifications.forEach(({ type, option }) => {
+      const modification = StrategyFactory.createStrategy({ type, option });
+      this.strategies.push(modification);
+    });
+  }
+
+  processText(inputFileText: string) {
+    let modifiedText = inputFileText;
+
+    this.strategies.forEach((strategy) => {
+      modifiedText = strategy.modify(modifiedText);
+    });
+
+    return modifiedText;
   }
 }

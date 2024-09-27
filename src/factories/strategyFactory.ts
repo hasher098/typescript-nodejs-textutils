@@ -1,38 +1,27 @@
-import { AddEveryWordStrategy } from "../strategies/addEveryWordStrategy";
-import { AddWordStrategy } from "../strategies/addWordStrategy";
-import { ModificationStrategy } from "../strategies/modificationStrategy";
-import { RemoveWordStrategy } from "../strategies/removeWordStrategy";
-import { ReverseStrategy } from "../strategies/reverseStrategy";
-import { ToLowerCaseStrategy } from "../strategies/toLowerCaseStrategy";
-import { ToUpperCaseStrategy } from "../strategies/toUpperCaseStrategy";
+import { CommandsType } from "../interfaces/commands";
+import { ModificationStrategy } from "../interfaces/modificationStrategy";
 
 export class StrategyFactory {
-  static createStrategy(
-    modificationType: string,
-    value?: string
-  ): ModificationStrategy {
-    switch (modificationType.toLowerCase()) {
-      case "uppercase":
-        return new ToUpperCaseStrategy();
+  private static strategies: Map<
+    string,
+    (option?: string) => ModificationStrategy
+  > = new Map();
 
-      case "lowercase":
-        return new ToLowerCaseStrategy();
+  static registerStrategy(
+    type: string,
+    creator: (option?: string) => ModificationStrategy
+  ) {
+    this.strategies.set(type.toLowerCase(), creator);
+  }
 
-      case "reverse":
-        return new ReverseStrategy();
+  static createStrategy(command: CommandsType): ModificationStrategy {
+    const strategyCreator = this.strategies.get(command.type.toLowerCase());
 
-      case "remove":
-        return new RemoveWordStrategy(value || "");
-
-      case "add":
-        return new AddWordStrategy(value || "");
-
-      case "addevery":
-        console.log("add every", value);
-        return new AddEveryWordStrategy(value || "");
-
-      default:
-        throw new Error(`Unknown type of modification: ${modificationType}`);
+    if (!strategyCreator) {
+      throw new Error(
+        `Check if your modification is allowed in your current plan: ${command.type}`
+      );
     }
+    return strategyCreator(command.option);
   }
 }

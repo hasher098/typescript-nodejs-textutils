@@ -1,4 +1,4 @@
-import { ModificationStrategy } from "./modificationStrategy";
+import { ModificationStrategy } from "../interfaces/modificationStrategy";
 
 export class RemoveWordStrategy implements ModificationStrategy {
   private wordToRemove: string;
